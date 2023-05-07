@@ -5,7 +5,7 @@ import 'package:animal_app_dashboard/presentation_layer/screen/home_screen/home_
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
-int pageIndex = 0;
+int pageIndex = 1;
 
 class Example extends StatefulWidget {
   @override
@@ -27,7 +27,7 @@ class _ExampleState extends State<Example> {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
         key: _bottomNavigationKey,
-        index: 0,
+        index: 1,
         height: 60.0,
         items: <Widget>[
           Image.asset(
@@ -38,35 +38,19 @@ class _ExampleState extends State<Example> {
                 ? ColorManager.background
                 : ColorManager.kPrimary2,
           ),
-          // Image.asset(
-          //   'assets/icons/heart.png',
-          //   width: size,
-          //   height: high,
-          //   color: pageIndex == 1
-          //       ? ColorManager.background
-          //       : ColorManager.kPrimary2,
-          // ),
           Image.asset(
             'assets/icons/home.png',
             width: size,
             height: high,
-            color: pageIndex == 2
+            color: pageIndex == 1
                 ? ColorManager.background
                 : ColorManager.kPrimary2,
           ),
-          // Image.asset(
-          //   'assets/icons/bag.png',
-          //   width: size,
-          //   height: high,
-          //   color: pageIndex == 3
-          //       ? ColorManager.background
-          //       : ColorManager.kPrimary2,
-          // ),
           Image.asset(
             'assets/icons/setting.png',
             width: size,
             height: high,
-            color: pageIndex == 4
+            color: pageIndex == 2
                 ? ColorManager.background
                 : ColorManager.kPrimary2,
           ),

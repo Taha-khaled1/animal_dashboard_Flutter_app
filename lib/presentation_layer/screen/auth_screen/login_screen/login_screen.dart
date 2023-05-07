@@ -102,17 +102,6 @@ class Login_Screen extends StatelessWidget {
                     },
                   ),
                   DoubleDivider(),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SocialIcon(image: 'assets/icons/facebook.png'),
-                      SizedBox(
-                        width: 25,
-                      ),
-                      SocialIcon(image: 'assets/icons/google.png'),
-                    ],
-                  ),
                   SizedBox(
                     height: 15,
                   ),

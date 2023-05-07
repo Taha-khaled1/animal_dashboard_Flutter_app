@@ -6,6 +6,7 @@ import 'package:animal_app_dashboard/presentation_layer/resources/font_manager.d
 import 'package:animal_app_dashboard/presentation_layer/resources/styles_manager.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/account_screen/widget/customListtile.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/add_product/add_product_screen.dart';
+import 'package:animal_app_dashboard/presentation_layer/screen/add_service/add_service_screen.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/edit_profile_screen/edit_profile_screen.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/screenseting/aboutpage.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/screenseting/sharescreen.dart';
@@ -58,7 +59,7 @@ class AccountScreen extends StatelessWidget {
                   widget: const Icon(Icons.add),
                   titel: 'اضافة خدمة',
                   onTap: () {
-                    Get.to(const EditProfileScreen());
+                    Get.to(const AddService());
                   },
                 ),
                 CustomListtile(

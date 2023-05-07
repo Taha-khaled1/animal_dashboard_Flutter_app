@@ -7,8 +7,8 @@ import 'package:animal_app_dashboard/presentation_layer/resources/font_manager.d
 import 'package:animal_app_dashboard/presentation_layer/resources/styles_manager.dart';
 import 'package:flutter/material.dart';
 
-class AddProduct extends StatelessWidget {
-  const AddProduct({Key? key}) : super(key: key);
+class AddService extends StatelessWidget {
+  const AddService({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,38 +167,6 @@ class AddProduct extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextfeild(
-                          text: 'الكميه',
-                          valid: (p0) {},
-                          onsaved: (p0) {},
-                          titel: '',
-                          width: deviceInfo.localWidth * 0.05,
-                          height: 60,
-                          fillColor: const Color(0xffF0F0F0),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomTextfeild(
-                          text: 'الحجم',
-                          valid: (p0) {},
-                          onsaved: (p0) {},
-                          titel: '',
-                          width: deviceInfo.localWidth * 0.05,
-                          height: 60,
-                          fillColor: const Color(0xffF0F0F0),
-                        ),
-                      ),
-                    ],
                   ),
                   SizedBox(
                     height: 10,

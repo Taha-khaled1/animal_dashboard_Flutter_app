@@ -57,7 +57,7 @@ class CustomTextfeild extends StatelessWidget {
                 text!,
                 style: MangeStyles().getBoldStyle(
                   color: ColorManager.kPrimary,
-                  fontSize: FontSize.s20,
+                  fontSize: FontSize.s18,
                 ),
               ),
             ),
