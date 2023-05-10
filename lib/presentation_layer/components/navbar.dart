@@ -13,11 +13,11 @@ class Example extends StatefulWidget {
 }
 
 class _ExampleState extends State<Example> {
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-  List<Widget> _widgetOptions = <Widget>[
-    AccountScreen(),
-    HomeScreen(),
+  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
+  final List<Widget> _widgetOptions = <Widget>[
     BookingScreen(),
+    HomeScreen(),
+    AccountScreen(),
   ];
   double high = 30;
   double size = 30;
