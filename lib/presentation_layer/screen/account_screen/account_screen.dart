@@ -1,3 +1,4 @@
+import 'package:animal_app_dashboard/main.dart';
 import 'package:animal_app_dashboard/presentation_layer/Infowidget/ui_components/info_widget.dart';
 import 'package:animal_app_dashboard/presentation_layer/components/appbar1.dart';
 import 'package:animal_app_dashboard/presentation_layer/components/custombutten.dart';
@@ -7,8 +8,10 @@ import 'package:animal_app_dashboard/presentation_layer/resources/styles_manager
 import 'package:animal_app_dashboard/presentation_layer/screen/account_screen/widget/customListtile.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/add_product/add_product_screen.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/add_service/add_service_screen.dart';
+import 'package:animal_app_dashboard/presentation_layer/screen/auth_screen/login_screen/login_screen.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/edit_profile_screen/edit_profile_screen.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/screenseting/aboutpage.dart';
+import 'package:animal_app_dashboard/presentation_layer/screen/screenseting/privacy_policy.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/screenseting/sharescreen.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/screenseting/terms.dart';
 
@@ -59,14 +62,14 @@ class AccountScreen extends StatelessWidget {
                   widget: const Icon(Icons.add),
                   titel: 'اضافة خدمة',
                   onTap: () {
-                    Get.to(const AddService());
+                    Get.to(() => const AddService());
                   },
                 ),
                 CustomListtile(
                   widget: const Icon(Icons.privacy_tip_outlined),
                   titel: 'سياسة الخصوصيه',
                   onTap: () {
-                    // Get.to(page);
+                    Get.to(() => PrivacyPolicy());
                   },
                 ),
                 CustomListtile(
@@ -83,33 +86,7 @@ class AccountScreen extends StatelessWidget {
                     Get.to(() => const ShareApp());
                   },
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  child: Text(
-                    'المساعده',
-                    style: MangeStyles().getBoldStyle(
-                      color: ColorManager.ktextblackk,
-                      fontSize: FontSize.s18,
-                    ),
-                  ),
-                ),
-                CustomListtile(
-                  widget: const Icon(Icons.call),
-                  titel: 'تواصل معنا',
-                  onTap: () {
-                    Get.to(
-                      () => const SupportProblemScreen(),
-                    );
-                  },
-                ),
-                CustomListtile(
-                  widget: const Icon(Icons.info_outline),
-                  titel: 'معلومات عنا',
-                  onTap: () {
-                    Get.to(() => const AboutPage());
-                  },
-                ),
+                // ),
                 const SizedBox(
                   height: 40,
                 ),
@@ -121,7 +98,11 @@ class AccountScreen extends StatelessWidget {
                     haigh: 60,
                     color: ColorManager.kPrimary,
                     text: 'تسجيل الخروج',
-                    press: () {},
+                    press: () {
+                      sharedPreferences.remove("token");
+                      sharedPreferences.remove("id");
+                      Get.offAll(() => LoginScreen());
+                    },
                   ),
                 ),
               ],

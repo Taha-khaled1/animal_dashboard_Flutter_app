@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class TermsAndConditionsPage extends StatefulWidget {
+class PrivacyPolicy extends StatefulWidget {
+  const PrivacyPolicy({super.key});
+
   @override
-  State<TermsAndConditionsPage> createState() => _TermsAndConditionsPageState();
+  State<PrivacyPolicy> createState() => _PrivacyPolicyState();
 }
 
-class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
+class _PrivacyPolicyState extends State<PrivacyPolicy> {
   var controller = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(const Color(0x00000000))
@@ -27,7 +29,7 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
       ),
     )
     ..loadRequest(Uri.parse(
-        'https://portfolio-b0317.web.app/elegent-pet-care/terms-app.html'));
+        'https://portfolio-b0317.web.app/elegent-pet-care/privacy-policy.html'));
   @override
   Widget build(BuildContext context) {
     return Scaffold(

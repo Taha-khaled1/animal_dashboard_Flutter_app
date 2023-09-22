@@ -1,17 +1,22 @@
+import 'dart:convert';
 import 'package:animal_app_dashboard/application_layer/ShardFunction/statusrequst.dart';
 import 'package:animal_app_dashboard/application_layer/ShardFunction/valid.dart';
+import 'package:animal_app_dashboard/main.dart';
 import 'package:animal_app_dashboard/presentation_layer/Infowidget/ui_components/info_widget.dart';
 import 'package:animal_app_dashboard/presentation_layer/components/appbar1.dart';
 import 'package:animal_app_dashboard/presentation_layer/components/custombutten.dart';
 import 'package:animal_app_dashboard/presentation_layer/components/customtextfild.dart';
+import 'package:animal_app_dashboard/presentation_layer/components/show_dialog.dart';
 import 'package:animal_app_dashboard/presentation_layer/resources/color_manager.dart';
 import 'package:animal_app_dashboard/presentation_layer/resources/font_manager.dart';
 import 'package:animal_app_dashboard/presentation_layer/resources/styles_manager.dart';
 import 'package:animal_app_dashboard/presentation_layer/resources/values_manager.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/account_screen/widget/customListtile.dart';
 import 'package:animal_app_dashboard/presentation_layer/screen/edit_profile_screen/controller/edit_profile_controller.dart';
+import 'package:animal_app_dashboard/presentation_layer/utlis/image_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -23,7 +28,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final GlobalKey<FormState> formkeysigin = GlobalKey();
   StatusRequest statusRequest1 = StatusRequest.none;
-  String? name, phone;
+  String? name, phone, email, address;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,52 +47,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: ListView(
                   shrinkWrap: false,
                   children: [
-                    // Align(
-                    //   alignment: Alignment.topRight,
-                    //   child: Text(
-                    //     'تعديل الحساب',
-                    //     style: MangeStyles().getBoldStyle(
-                    //       color: ColorManager.kPrimary,
-                    //       fontSize: FontSize.s25,
-                    //     ),
-                    //   ),
-                    // ),
                     SizedBox(
                       height: 20,
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child:
-
-                          // sharedPreferences.getString('avatar') == null ||
-                          //         sharedPreferences.getString('avatar') == 'null'
-                          //     ? CircleAvatar(
-                          //         radius: 70,
-                          //         backgroundImage:
-                          //             AssetImage('assets/icons/person.jpg'),
-                          //         child: Transform.translate(
-                          //           offset: const Offset(40, 50),
-                          //           child: InkWell(
-                          //             onTap: () {},
-                          //             child: Container(
-                          //               alignment: Alignment.center,
-                          //               width: 36,
-                          //               height: 36,
-                          //               decoration: BoxDecoration(
-                          //                 color: Colors.blue,
-                          //                 borderRadius: BorderRadius.circular(30),
-                          //               ),
-                          //               child: const Icon(Icons.edit_outlined),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       )
-                          //     :
-
-                          CircleAvatar(
+                      child: CircleAvatar(
                         radius: 70,
-                        backgroundImage: AssetImage(
-                          'assets/images/Rectangle.png',
+                        backgroundImage: NetworkImage(
+                          imageNetworkCheck(
+                            sharedPreferences.getString("profile_image"),
+                          ),
                         ),
                         child: Transform.translate(
                           offset: const Offset(40, 50),
@@ -111,19 +81,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       thickness: 1.2,
                     ),
                     Text(
-                      'الاسم التجاري',
+                      'الاسم واللقب',
                       style: MangeStyles().getBoldStyle(
                         color: ColorManager.kTextlightgray,
                         fontSize: FontSize.s20,
                       ),
                     ),
                     CustomTextfeild(
+                      inialvalue: sharedPreferences.getString("name"),
                       // inialvalue: sharedPreferences.getString('name'),
                       valid: (p0) {
-                        return validInput(p0.toString(), 1, 100, 'type');
+                        return validInput(p0.toString(), 3, 100, 'type');
                       },
                       onsaved: (p0) {
                         return name = p0.toString();
+                      },
+                      titel: 'ادخل هنا',
+                      width: deviceInfo.localWidth * 0.02,
+                      height: 70,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'البريد الاكتروني',
+                      style: MangeStyles().getBoldStyle(
+                        color: ColorManager.kTextlightgray,
+                        fontSize: FontSize.s20,
+                      ),
+                    ),
+                    CustomTextfeild(
+                      inialvalue: sharedPreferences.getString('email'),
+                      //     ? 'لايوجد رقم هاتف'
+                      //     : sharedPreferences.getString('phone')!,
+                      valid: (p0) {
+                        return validInput(p0.toString(), 5, 100, 'email');
+                      },
+                      onsaved: (p0) {
+                        return email = p0.toString();
                       },
                       titel: 'ادخل هنا',
                       width: deviceInfo.localWidth * 0.02,
@@ -138,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     CustomTextfeild(
-                      // inialvalue: sharedPreferences.getString('phone') == 'null'
+                      inialvalue: sharedPreferences.getString('phone'),
                       //     ? 'لايوجد رقم هاتف'
                       //     : sharedPreferences.getString('phone')!,
                       valid: (p0) {
@@ -151,80 +144,60 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       width: deviceInfo.localWidth * 0.02,
                       height: 70,
                     ),
-
                     const SizedBox(height: 10),
                     Text(
-                      'العنوان',
+                      'عنوان المنزل',
                       style: MangeStyles().getBoldStyle(
                         color: ColorManager.kTextlightgray,
                         fontSize: FontSize.s20,
                       ),
                     ),
                     CustomTextfeild(
-                      readOnly: true,
+                      inialvalue: sharedPreferences.getString('address'),
+                      // readOnly: true,
                       isBoarder: BorderStyle.none,
                       valid: (p0) {
-                        return null;
+                        return validInput(p0.toString(), 5, 100, 'address');
                       },
                       onsaved: (p0) {
-                        return null;
+                        return address = p0.toString();
                       },
                       titel: 'Abudabhi 201,82299 ابوظبي',
                       width: deviceInfo.localWidth * 0.02,
                       height: 70,
                     ),
                     const SizedBox(
-                      height: 15,
+                      height: 10,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: deviceInfo.localWidth * 0.1),
+                          horizontal: deviceInfo.localWidth * 0.02),
                       child: CustomButton(
-                        width: deviceInfo.localWidth * 0.8,
+                        width: deviceInfo.localWidth * 0.9,
                         haigh: 60,
                         color: ColorManager.kPrimary,
                         text: 'حفظ التغيرات',
-                        press: () {},
+                        press: () async {
+                          if (formkeysigin.currentState!.validate()) {
+                            formkeysigin.currentState!.save();
+                            try {
+                              await updateProfile(
+                                name: name!,
+                                phone: phone!,
+                                address:
+                                    'Abudabhi 201,82299 ابوظبي', // Replace with a variable if the address can change.
+                                photoPath:
+                                    'YOUR_PHOTO_PATH', // You'll need to handle photo uploads separately.
+                              );
+                              // Maybe show a success snackbar/message to the user.
+                            } catch (error) {
+                              // Handle any errors that might occur during the API call.
+                              print(error);
+                            }
+                          }
+                        },
                       ),
                     ),
-                    // HandlingDataView(
-                    //   statusRequest: statusRequest1,
-                    //   widget: CustomButton(
-                    //     width: deviceInfo.localWidth,
-                    //     haigh: 60,
-                    //     color: ColorManager.kPrimary,
-                    //     text: 'حفظ',
-                    //     press: () async {
-                    //       if (formkeysigin.currentState!.validate()) {
-                    //         formkeysigin.currentState!.save();
-
-                    //         statusRequest1 = StatusRequest.loading;
-                    //         setState(() {});
-                    //         var respon = await cahngeProfileRes(name!, phone!);
-                    //         statusRequest1 = handlingData(respon);
-                    //         try {
-                    //           if (StatusRequest.success == statusRequest1) {
-                    //             statusRequest1 = StatusRequest.none;
-                    //             sharedPreferences.setString(
-                    //                 'phone', phone.toString());
-
-                    //             sharedPreferences.setString(
-                    //                 'name', name.toString());
-                    //             Get.back();
-                    //             Get.back();
-                    //             showDilog(context, 'تم تغير المعلومات بنجاح');
-                    //           } else {
-                    //             statusRequest1 = StatusRequest.serverfailure;
-                    //           }
-                    //         } catch (e) {
-                    //           statusRequest1 = StatusRequest.erorr;
-                    //         }
-
-                    //         setState(() {});
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -233,6 +206,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         },
       ),
     );
+  }
+
+  Future<void> updateProfile({
+    required String name,
+    required String phone,
+    required String address,
+    required String photoPath,
+  }) async {
+    print(sharedPreferences.getString('token'));
+    const url = 'https://elegantae.net/api/profile/update-profile';
+    var headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${sharedPreferences.getString('token')}',
+      // 'Cookie':
+      //     'XSRF-TOKEN=eyJpdiI6InBkTTNJL0ZtQXgwNGpLblVBOXMyU0E9PSIsInZhbHVlIjoid3l6M3pnRXV4bWJibEhxWkorRUhiRGh4OWFMY3JJenFqNlpidkRsakVNQklWcWt6aTNQSTVnTTR6c29RY3k4cTN4clRuZC85MHNyL1BaY3Vic1hHeHdIWFNWTzZnbmtOVjFZZjgraDM1azFabVIzVk96WDVYUDd2c3RrMkM5SXMiLCJtYWMiOiIxMzNmY2M1MTA3NWFkZDdmNTVkNmM0MDZiNzFiZjdhZDQwNTMxMGE0MTZkY2M0MDFhMzgwYzc2YTViZDJmYzI4IiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6IkpzTTJYdEFEZy9KTmVvU0xGWEJxM1E9PSIsInZhbHVlIjoiUjYwd3BNZEVSZ1NMTHpXcUl4cStwSFFTeFlLV1MzWkhUMmgyZjZEdU53UldiVlQrQm43Y0d2V2tEUU1PbE5GSmIyYnZ4NkRydS91bEp1djdYU0RoanRDUFo3a0R1UUhZZjJQbTd1ODZvOUdLWWIxU3ZpanlCV3BFVnJkRzRFWjgiLCJtYWMiOiI3Nzk0ODg2ZDkxZDIxYmUxOWZhZjUwNTA1Njc0MTk1MTY2MmM0N2IwMWFmMjI3NDE3MWFhMGY4MmQ1OWNkMjBlIiwidGFnIjoiIn0%3D',
+    };
+
+    final body = jsonEncode({
+      'name': name,
+      'Number': phone,
+      'phone': phone,
+      'address': address,
+      // 'About': "About",
+      // 'Gender': "male",
+      'email': email,
+      // 'DOB': "DOB",
+      // 'street_address': "street_address",
+      // 'image': photoPath,
+    });
+
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      // Handle successful response
+      var data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        sharedPreferences.setString('email', email!);
+        sharedPreferences.setString('phone', phone!);
+        sharedPreferences.setString('name', name!);
+        sharedPreferences.setString('address', address!);
+        print('success updating profile: ${response.body}');
+        Get.back();
+        showDilog(context, "تم التحديث بنجاح");
+      } else {
+        // Handle the error message if any.
+        print(data['message']);
+      }
+    } else {
+      // Handle the error
+      print('Error updating profile: ${response.body}');
+    }
   }
 }
 
@@ -333,3 +359,41 @@ void handleAttachmentPressed(
     ),
   );
 }
+                    // HandlingDataView(
+                    //   statusRequest: statusRequest1,
+                    //   widget: CustomButton(
+                    //     width: deviceInfo.localWidth,
+                    //     haigh: 60,
+                    //     color: ColorManager.kPrimary,
+                    //     text: 'حفظ',
+                    //     press: () async {
+                    //       if (formkeysigin.currentState!.validate()) {
+                    //         formkeysigin.currentState!.save();
+
+                    //         statusRequest1 = StatusRequest.loading;
+                    //         setState(() {});
+                    //         var respon = await cahngeProfileRes(name!, phone!);
+                    //         statusRequest1 = handlingData(respon);
+                    //         try {
+                    //           if (StatusRequest.success == statusRequest1) {
+                    //             statusRequest1 = StatusRequest.none;
+                    //             sharedPreferences.setString(
+                    //                 'phone', phone.toString());
+
+                    //             sharedPreferences.setString(
+                    //                 'name', name.toString());
+                    //             Get.back();
+                    //             Get.back();
+                    //             showDilog(context, 'تم تغير المعلومات بنجاح');
+                    //           } else {
+                    //             statusRequest1 = StatusRequest.serverfailure;
+                    //           }
+                    //         } catch (e) {
+                    //           statusRequest1 = StatusRequest.erorr;
+                    //         }
+
+                    //         setState(() {});
+                    //       }
+                    //     },
+                    //   ),
+                    // ),
