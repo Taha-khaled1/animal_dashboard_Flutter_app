@@ -7,9 +7,9 @@ PreferredSizeWidget appbarscreen(String title) {
   return AppBar(
     elevation: 0,
     backgroundColor: ColorManager.background,
-    leading: BackButton(
-      color: ColorManager.kPrimary,
-    ),
+    // leading: BackButton(
+    //   color: ColorManager.kPrimary,
+    // ),
     centerTitle: true,
     title: Text(
       title,

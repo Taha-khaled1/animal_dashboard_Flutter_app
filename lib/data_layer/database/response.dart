@@ -10,3 +10,14 @@ dynamic getHome(String data) async {
   print("++++++++++++$respons+++++++");
   return respons;
 }
+
+dynamic getStaticHome() async {
+  Curd curd = Curd();
+  var respons = await curd.getrequest(
+    "https://elegantae.net/api/vendor-account/statistics",
+    myheadersres: curd.myheadersfail,
+  );
+  print("+++++++++++++++++++");
+  print("++++++++++++$respons+++++++");
+  return respons;
+}

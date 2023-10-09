@@ -7,6 +7,13 @@ import 'package:animal_app_dashboard/presentation_layer/resources/font_manager.d
 import 'package:animal_app_dashboard/presentation_layer/resources/styles_manager.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+import 'home_controller/home_controller.dart';
+
+DateTime selectedDate = DateTime.now();
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -16,72 +23,85 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isloading = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.background,
       appBar: appbarscreen('لوحة التحكم'),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: InfoWidget(
-          builder: (context, deviceInfo) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'تقارير اليوم',
-                  style: MangeStyles().getBoldStyle(
-                    color: ColorManager.white,
-                    fontSize: FontSize.s25,
+      body: GetBuilder<HomeController>(
+        init: HomeController(),
+        builder: (controller) {
+          return !controller.isload
+              ? Container(
+                  alignment: Alignment.topCenter,
+                  child: InfoWidget(
+                    builder: (context, deviceInfo) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'تقارير اليوم',
+                            style: MangeStyles().getBoldStyle(
+                              color: ColorManager.white,
+                              fontSize: FontSize.s25,
+                            ),
+                          ),
+                          Text(
+                            DateFormat.yMMMMd('ar').format(selectedDate),
+                            style: MangeStyles().getBoldStyle(
+                              color: ColorManager.kTextlightgray,
+                              fontSize: FontSize.s27,
+                            ),
+                          ),
+                          Text(
+                            '${controller.homeStaticModel?.data?.totalSales.toString()}',
+                            style: MangeStyles().getBoldStyle(
+                              color: ColorManager.kPrimary,
+                              fontSize: FontSize.s25,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Wrap(
+                            // crossAxisAlignment: WrapCrossAlignment.center,
+                            alignment: WrapAlignment.spaceEvenly,
+                            direction: Axis.horizontal,
+                            //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SquerText(
+                                text:
+                                    '${controller.homeStaticModel?.data?.waitingList.toString()}',
+                                title: 'قائمة الانتظار',
+                              ),
+                              SquerText(
+                                text:
+                                    '${controller.homeStaticModel?.data?.services.toString()}',
+                                title: 'الخدمات',
+                              ),
+                              SquerText(
+                                text:
+                                    '${controller.homeStaticModel?.data?.closed.toString()}',
+                                title: 'مغلق',
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 300,
+                            width: double.infinity,
+                            child: BarChartWidget(controller: controller),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ),
-                Text(
-                  '20 سبتمبر الساعة 09:30 مساءً',
-                  style: MangeStyles().getBoldStyle(
-                    color: ColorManager.kTextlightgray,
-                    fontSize: FontSize.s20,
-                  ),
-                ),
-                Text(
-                  '12,000',
-                  style: MangeStyles().getBoldStyle(
-                    color: ColorManager.kPrimary,
-                    fontSize: FontSize.s25,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Wrap(
-                  // crossAxisAlignment: WrapCrossAlignment.center,
-                  alignment: WrapAlignment.spaceEvenly,
-                  direction: Axis.horizontal,
-                  //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    SquerText(
-                      text: '15',
-                      title: 'قائمة الانتظار',
-                    ),
-                    SquerText(
-                      text: '03',
-                      title: 'الخدمات',
-                    ),
-                    SquerText(
-                      text: '07',
-                      title: 'مغلق',
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 300,
-                  width: double.infinity,
-                  child: BarChartSample2(),
-                ),
-              ],
-            );
-          },
-        ),
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                );
+        },
       ),
     );
   }
@@ -124,6 +144,55 @@ class SquerText extends StatelessWidget {
       ),
     );
   }
+}
+
+class BarChartWidget extends StatelessWidget {
+  const BarChartWidget({super.key, required this.controller});
+  final HomeController controller;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          child: OrientationBuilder(
+            builder: (context, orientation) {
+              final bool isPortrait = orientation == Orientation.landscape;
+              return Container(
+                child: SfCartesianChart(
+                  series: <ChartSeries>[
+                    // Renders bar chart
+                    BarSeries<ChartData, String>(
+                      dataSource: controller.chartData,
+                      xValueMapper: (ChartData data, _) => data.name.toString(),
+                      yValueMapper: (ChartData data, _) => data.value,
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true, // Enables the data label
+                        labelPosition: ChartDataLabelPosition.inside,
+
+                        // Positions the data label
+                        // You can also use other properties to style the data labels
+                      ),
+                    )
+                  ],
+                  plotAreaBorderWidth: 1,
+                  isTransposed: true,
+                  primaryXAxis: CategoryAxis(),
+                  primaryYAxis: NumericAxis(),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  String name;
+  double value;
+
+  ChartData(this.name, this.value);
 }
 
 class BarChartSample2 extends StatefulWidget {
